@@ -62,12 +62,6 @@ export default function SignUpPage() {
                         {/* Header */}
                         <div className="text-center mb-6">
 
-                            <div className="mx-auto mb-4 w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
-
-                                <span className="text-2xl">✦</span>
-
-                            </div>
-
                             <h1 className="text-2xl font-bold text-white tracking-tight">
                                 Create Account
                             </h1>
