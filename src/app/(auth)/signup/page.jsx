@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
+import { toast } from "react-toastify";
 
 export default function SignUpPage() {
     const [name, setName] = useState("");
@@ -15,7 +16,7 @@ export default function SignUpPage() {
     const handleSignup = async (e) => {
         e.preventDefault();
 
-        const { data, error } = await authClient.signUp.email({
+        const { error } = await authClient.signUp.email({
             name,
             email,
             password,
@@ -23,14 +24,21 @@ export default function SignUpPage() {
         });
 
         if (error) {
-            alert(error.message);
+            if (error.status === 400) {
+                toast.error("Please check your information and try again.");
+            } else if (error.status === 409) {
+                toast.error("An account with this email already exists.");
+            } else {
+                toast.error("Unable to create your account. Please try again.");
+            }
+
             return;
         }
 
-        alert("Send OTP to your email, check your email:");
+        toast.success("Account created! Check your email for the verification code.");
+
         router.push(`/verify-email?email=${encodeURIComponent(email)}`);
     };
-
     const handleGoogleSignIn = async () => {
         const resDta = await authClient.signIn.social({
             provider: "google"

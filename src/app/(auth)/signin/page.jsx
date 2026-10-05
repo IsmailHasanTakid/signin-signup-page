@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
+import { toast } from "react-toastify";
 
 export default function SignInPage() {
     const [email, setEmail] = useState("");
@@ -11,23 +12,28 @@ export default function SignInPage() {
     const handleSignin = async (e) => {
         e.preventDefault();
 
-        const { data, error } = await authClient.signIn.email({
+        const {error } = await authClient.signIn.email({
             email,
             password,
             // callbackURL: "/",
         });
 
         if (error) {
-            if (error.status === 403) {
-                alert("Check your email, not verified yet");
-            } else {
-                alert(error.message);
-            }
-            return;
+        if (error.status === 403) {
+            toast.error("Please verify your email first.");
+        } else if (error.status === 401) {
+            toast.error("Invalid email or password.");
+        } else if (error.status === 429) {
+            toast.error("Too many attempts. Please try again later.");
+        } else {
+            toast.error("Unable to sign in. Please try again.");
         }
 
-        console.log("Sign in successfully", data);
-    };
+        return;
+    }
+
+    toast.success("Welcome back! Sign in successful.");
+};
 
     // Google Sign In
     const handleGoogleSignIn = async () => {
